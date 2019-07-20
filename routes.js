@@ -102,11 +102,20 @@ router.put('/workout' , (req, res) =>{
         });
     }
 
-    var foundIndex = workouts.findIndex(w => w.id == req.body.id);
-    workouts[foundIndex] = req.body;
-    return res.status(200).send({
-        message: `PUT workout call for id ${req.body.id} succeded`
-    })
+    client.index({
+        index: 'workout',
+        type: 'mytype',
+        id: req.body.id,
+        body: req.body
+    }, (err, resp, status) =>{
+        if(err){
+            console.log(`Error ${err}`);
+        }else{
+            return res.status(200).send({
+                message: 'PUT workout call suecceded'
+            });
+        }
+    });
 })
 
 router.delete('/workout/:id', (req, res) =>{

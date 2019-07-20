@@ -1,7 +1,11 @@
 var express = require('express');
-
-
 var router = express.Router();
+var elasticsearch = require('elasticsearch');
+var client = new elasticsearch.Client({
+  host: 'localhost:9200',
+  log: 'trace'
+});
+
 var workouts = [
     {
         id:1,
@@ -19,6 +23,9 @@ var workouts = [
 
 router.use((req, res, next) => {
     console.log(req.method, req.url);
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4201');
+    res.setHeader('Access-Control-Allow-Methods', 'GET', 'POST', 'DELETE', 'PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type');
     next();
 })
 
@@ -32,18 +39,30 @@ router.get('/workouts', (req, res)=>{
 
 //GET ONE BY ID
 router.get('/workouts/:id', (req, res) =>{
-    let workout = workouts.find(workout => workout.id == req.params.id)
+   // let workout = workouts.find(workout => workout.id == req.params.id)
+   let workout;
 
-    if(!workout){
-        return res.status(400).send({
-            message: `Workout is not found for id ${req.params.id}` 
+   client.get({
+       index: 'workout',
+       type: 'mytype',
+       id: req.params.id
+   }, (err, resp, status) =>{
+        if(err){
+            console.log(`error: ${err}`);
+        }else{
+            workout = resp._source;
+            console.log(`I found the requested document ${resp}`);
+        }
+        if(!workout){
+            return res.status(400).send({
+                message: `workout is not found for id ${req.param.id}`
+            });
+        }
+        return res.status(200).send({
+            message: `GET workout call for id ${req.params.id} succeded`,
+            workout: workout
         });
-    }
-
-    return res.status(200).send({
-        message: `GET workout call for id ${req.params.id} succeded`,
-        workout: workout
-    });
+   });
 })
 
 //POST workout
@@ -54,10 +73,23 @@ router.post('/workout', (req, res) => {
             message : `Id is required`
         });
     }
-    workouts.push(req.body);
-    return res.status(200).send({
-        message: `POST workout call succeded`
+    //
+    // workouts.push(req.body);
+    client.index({
+       index: 'workout',
+       type: 'mytype',
+       id: req.body.id,
+       body: req.body
+    }, (err, resp, status)=> {
+        if(err){
+            console.log(`Error: ${err}`);
+        } else {
+            return res.status(200).send({
+                message: `POST workout call succeded`
+            })
+        }
     });
+
 })
 
 //UPDATE WORKOUT

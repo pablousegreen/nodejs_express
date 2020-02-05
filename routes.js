@@ -11,12 +11,14 @@ var workouts = [
     id: 1,
     type: "Weights",
     duration: 45,
+    comment: "firt comment to app",
     date: "10/07/19"
   },
   {
     id: 2,
     type: "Run",
     duration: 30,
+    comment: "firt comment to app",
     date: "10/07/19"
   }
 ];
@@ -63,7 +65,6 @@ router.get("/workouts", async (req, res) => {
     message: "GET workout call succeded",
     workout: workout
   });
-
 });
 
 //GET ONE BY ID
@@ -95,6 +96,49 @@ router.get("/workouts/:id", (req, res) => {
       });
     }
   );
+});
+
+//GET ALL
+router.get("/workouts/get/:comment", async (req, res) => {
+  let workout = [];
+  let commentParam = req.params.comment;
+  console.log("commentParam: ", commentParam);
+  const response = await client.search({
+    index: "workout",
+    type: "mytype",
+    // keep the search results "scrollable" for 30 seconds
+    scroll: "30s",
+    // for the sake of this example, we will get only one result per search
+    size: 1000,
+    // filter the source to only include the quote field
+    //_source: ["comment"],
+    body: {
+      query: {
+        bool: {
+          must: {
+            match: {
+              comment: commentParam
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (response === null || response === undefined) {
+    return res.status(400).send({
+      message: `workout is not found for all`
+    });
+  }
+
+  response.hits.hits.map(e => {
+    workout.push(e);
+  });
+
+  return res.status(200).send({
+    message: "GET workout call succeded",
+    workout: workout
+  });
 });
 
 //POST workout

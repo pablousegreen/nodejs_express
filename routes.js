@@ -34,7 +34,7 @@ router.use((req, res, next) => {
   next();
 });
 
-//GET ALL
+//GET ALL : localhost:3000/api/workouts
 router.get("/workouts", async (req, res) => {
   let workout = [];
 
@@ -67,7 +67,7 @@ router.get("/workouts", async (req, res) => {
   });
 });
 
-//GET ONE BY ID
+//GET ONE BY ID : localhost:3000/api/workouts/1
 router.get("/workouts/:id", (req, res) => {
   // let workout = workouts.find(workout => workout.id == req.params.id)
   let workout;
@@ -98,7 +98,7 @@ router.get("/workouts/:id", (req, res) => {
   );
 });
 
-//GET ALL
+//GET ALL  comments : localhost:3000/api/workouts/get/comment
 router.get("/workouts/get/:comment", async (req, res) => {
   let workout = [];
   let commentParam = req.params.comment;
@@ -119,7 +119,17 @@ router.get("/workouts/get/:comment", async (req, res) => {
             match: {
               comment: commentParam
             }
-          }
+          },
+          filter: [
+            {
+              range: {
+                duration: {
+                  gte: 1,
+                  lte: 20
+                }
+              }
+            }
+          ]
         }
       }
     }
@@ -141,7 +151,14 @@ router.get("/workouts/get/:comment", async (req, res) => {
   });
 });
 
-//POST workout
+//POST workout : localhost:3000/api/workout/
+// {
+//     "id": 5,
+//     "type": "Mex Open 5",
+//     "duration": 3,
+//     "comment" : "fiveth comment to app",
+//     "date": "18/09/19"
+// }
 router.post("/workout", (req, res) => {
   console.log(`Bodi id: ${req.body.id}`);
   if (!req.body.id) {
@@ -170,7 +187,14 @@ router.post("/workout", (req, res) => {
   );
 });
 
-//UPDATE WORKOUT
+//UPDATE WORKOUT :: localhost:3000/api/workout/
+// {
+//     "id": 5,
+//     "type": "Mex Open 5",
+//     "duration": 3,
+//     "comment" : "fiveth comment to app",
+//     "date": "18/09/19"
+// }
 
 router.put("/workout", (req, res) => {
   console.log(`Bodi id: ${req.body.id}`);
@@ -199,11 +223,26 @@ router.put("/workout", (req, res) => {
   );
 });
 
+//delete : localhost:3000/api/workout/5
 router.delete("/workout/:id", (req, res) => {
-  var foundIndex = workouts.findIndex(w => w.id == req.params.id);
-  workouts.splice(foundIndex, 1);
-  return res.status(200).send({
-    message: `DELETE workout call for id ${req.params.id} succeded`
-  });
+  //   var foundIndex = workouts.findIndex(w => w.id == req.params.id);
+  //   workouts.splice(foundIndex, 1);
+  client.delete(
+    {
+      index: "workout",
+      id: req.params.id,
+      type: "mytype"
+    },
+    function(err, resp, status) {
+      console.log(resp);
+      if (err) {
+        console.log(`Error: ${err}`);
+      } else {
+        return res.status(200).send({
+          message: `DELETE workout call for id ${req.params.id} succeded`
+        });
+      }
+    }
+  );
 });
 module.exports = router;

@@ -4,11 +4,13 @@
   "description": "example001 node express elasticksearch",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "author": "Pablo Gonzalez R",
   "license": "ISC",
   "dependencies": {
+    "elasticsearch": "^16.3.0",
     "express": "^4.17.1"
   }
 }

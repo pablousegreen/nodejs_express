@@ -42,6 +42,7 @@ localhost:3000/api/workouts/5
         "id": 5,
         "type": "Mex Open 5",
         "duration": 3,
+         "comment": "firt comment to app",
         "date": "18/09/19"
     }
 }
@@ -49,11 +50,12 @@ localhost:3000/api/workouts/5
 //POST
 localhost:3000/api/workout
 {
-            "id": 5,
-            "type": "Mex Open 5",
-            "duration": 3,
-            "date": "18/09/19"
-        }
+	"id": 5,
+	"type": "Mex Open 5",
+	"duration": 3,
+	 "comment": "firt comment to app",
+	"date": "18/09/19"
+}
 
 
 https://www.youtube.com/watch?v=RUw1WUsRuH8

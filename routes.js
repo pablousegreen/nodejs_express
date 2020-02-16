@@ -159,8 +159,8 @@ router.get("/workouts/get/:comment", async (req, res) => {
 //     "comment" : "fiveth comment to app",
 //     "date": "18/09/19"
 // }
-router.post("/workout", (req, res) => {
-  console.log(`Bodi id: ${req.body.id}`);
+router.post("/workouts", (req, res) => {
+  console.log(`Body id: ${req.body.id}`);
   if (!req.body.id) {
     return res.status(400).send({
       message: `Id is required`
@@ -196,7 +196,7 @@ router.post("/workout", (req, res) => {
 //     "date": "18/09/19"
 // }
 
-router.put("/workout", (req, res) => {
+router.put("/workouts", (req, res) => {
   console.log(`Bodi id: ${req.body.id}`);
   if (!req.body.id) {
     return res.status(400).send({
@@ -224,7 +224,7 @@ router.put("/workout", (req, res) => {
 });
 
 //delete : localhost:3000/api/workout/5
-router.delete("/workout/:id", (req, res) => {
+router.delete("/workouts/:id", (req, res) => {
   //   var foundIndex = workouts.findIndex(w => w.id == req.params.id);
   //   workouts.splice(foundIndex, 1);
   client.delete(
